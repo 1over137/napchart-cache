@@ -3,6 +3,13 @@ const fetch = require('node-fetch')
 const fs = require('fs')
 const app = express()
 
+app.use((req, res, next) => {
+    res.append('Access-Control-Allow-Origin', ['https://polysleep.org']);
+    res.append('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    res.append('Access-Control-Allow-Headers', 'Content-Type');
+    next();
+});
+
 app.get('/napcharts/:Name(\\w{5})(.png)?', function (req, res) {
   napchartid = req.params['Name'];
   let is_cached = fs.existsSync('/napcharts/' + napchartid + '.png');
