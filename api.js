@@ -10,9 +10,11 @@ app.use((req, res, next) => {
     next();
 });
 
-app.get('/napcharts/:Name(\\w{5})(.png)?', function (req, res) {
+app.get('/napcharts/:Name(\\w{5,9})(.png)?', function (req, res) {
   napchartid = req.params['Name'];
+  console.log("Got a request")
   let is_cached = fs.existsSync('/napcharts/' + napchartid + '.png');
+  console.log("is_cached: ", is_cached)
   if (!is_cached) {
     getChart(napchartid, res)
   }
@@ -37,8 +39,9 @@ app.get('/napcharts/:Name.json', function (req, res) {
 app.listen(3000)
 
 async function getChart(napchartid, res) {
-  let imgurl = `http://thumb.napchart.com:1771/api/getimage?width=600&height=600&chartid=${napchartid}`;
-  let jsonurl = `http://thumb.napchart.com:1771/api/get?chartid=${napchartid}`;
+  console.log("reached getchart")
+  let imgurl = `http://api.napchart.com/v1/getImage/${napchartid}`;
+  let jsonurl = `http://api.napchart.com/v1/getChart/${napchartid}`;
   let jsonres = await fetch(jsonurl);
   if (!checkStatus(jsonres)) {
     res.status(404).send("Napchart was not found")
@@ -55,8 +58,8 @@ async function getChart(napchartid, res) {
 
 async function getJson (napchartid, res) {
   console.log("got to json part")
-  let imgurl = `http://thumb.napchart.com:1771/api/getimage?width=600&height=600&chartid=${napchartid}`;
-  let jsonurl = `http://thumb.napchart.com:1771/api/get?chartid=${napchartid}`;
+  let imgurl = `http://api.napchart.com/v1/getImage/${napchartid}`;
+  let jsonurl = `http://api.napchart.com/v1/getChart/${napchartid}`;
   let jsonres = await fetch(jsonurl);
   if (!checkStatus(jsonres)) {
     res.status(404).send("Napchart was not found")
